@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Input, Button } from "@nextui-org/react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export const AuthContext = createContext({});
+export const AuthContext = createContext<unknown>(null);
 
 const LOGIN = graphql(`
   mutation Login($username: String!) {
