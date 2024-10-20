@@ -24,7 +24,7 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/gql",
+  uri: import.meta.env.VITE_API_URL,
 });
 
 const client = new ApolloClient({
