@@ -1,7 +1,7 @@
 import { Reorder } from "framer-motion";
 import { graphql } from "./gql";
 import { useSuspenseQuery, useMutation } from "@apollo/client";
-import { Button, Card, CardBody } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 
 const ITEMS = graphql(`
   query OrderItems {
@@ -10,6 +10,7 @@ const ITEMS = graphql(`
       position
       label
       color
+      fgColor
     }
   }
 `);
@@ -30,6 +31,9 @@ const RESET_ORDER_ITEMS = graphql(`
   }
 `);
 
+const THRESHOLD = 0.1;
+const STEP = 16_384;
+
 function App() {
   const { data, client } = useSuspenseQuery(ITEMS);
 
@@ -49,7 +53,16 @@ function App() {
     });
   };
 
-  // console.log(JSON.stringify(items, null, 2));
+  const recalculatePositions = () => {
+    const newItems = items.map((item, index) => {
+      return {
+        ...item,
+        position: (index + 1) * 16384,
+      };
+    });
+
+    handleReorder(newItems);
+  };
 
   const handleDragEnd = async (item: (typeof items)[number], index: number) => {
     const nextItem = items[index + 1];
@@ -67,22 +80,20 @@ function App() {
     }
 
     if (prevItem && !nextItem) {
-      newPosition = prevItem.position + 16384;
+      newPosition = prevItem.position + STEP;
     }
 
     if (newPosition === currentItem.position) {
       return;
     }
 
-    if (newPosition <= 0.1) {
-      const newItems = items.map((item, index) => {
-        return {
-          ...item,
-          position: (index + 1) * 16384,
-        };
-      });
-
-      handleReorder(newItems);
+    if (
+      (nextItem && Math.abs(newPosition - nextItem.position) <= THRESHOLD) ||
+      (prevItem && Math.abs(newPosition - prevItem.position) <= THRESHOLD) ||
+      newPosition === currentItem.position
+    ) {
+      recalculatePositions();
+      console.log("Recalculating positions");
     }
 
     updateOrderItemPosition({
@@ -94,13 +105,9 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       <div>
-        <Button
-          color="primary"
-          onClick={() => resetOrderItems()}
-          isLoading={loading}
-        >
+        <Button onClick={() => resetOrderItems()} isLoading={loading}>
           Reset
         </Button>
       </div>
@@ -116,18 +123,17 @@ function App() {
             key={item.label}
             value={item}
           >
-            <Card
-              className="cursor-grab text-black"
+            <div
+              className="cursor-grab px-4 py-8 rounded-xl shadow-md"
               style={{
                 backgroundColor: item.color,
+                color: item.fgColor,
               }}
             >
-              <CardBody>
-                <p className="text-center font-semibold">
-                  {item.label} ({item.position})
-                </p>
-              </CardBody>
-            </Card>
+              <p className="text-center font-semibold">
+                {item.label} ({item.position})
+              </p>
+            </div>
           </Reorder.Item>
         ))}
       </Reorder.Group>

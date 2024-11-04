@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 const documents = {
-    "\n  query OrderItems {\n    orderItems {\n      id\n      position\n      label\n      color\n    }\n  }\n": types.OrderItemsDocument,
+    "\n  query OrderItems {\n    orderItems {\n      id\n      position\n      label\n      color\n      fgColor\n    }\n  }\n": types.OrderItemsDocument,
     "\n  mutation UpdateOrderItemPosition($id: String!, $newPosition: Float!) {\n    updateOrderItemPosition(id: $id, newPosition: $newPosition) {\n      id\n      position\n      label\n    }\n  }\n": types.UpdateOrderItemPositionDocument,
     "\n  mutation ResetOrderItems {\n    resetOrderItems\n  }\n": types.ResetOrderItemsDocument,
     "\n  mutation Login($username: String!) {\n    login(username: $username) {\n      id\n      username\n    }\n  }\n": types.LoginDocument,
@@ -38,7 +38,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query OrderItems {\n    orderItems {\n      id\n      position\n      label\n      color\n    }\n  }\n"): (typeof documents)["\n  query OrderItems {\n    orderItems {\n      id\n      position\n      label\n      color\n    }\n  }\n"];
+export function graphql(source: "\n  query OrderItems {\n    orderItems {\n      id\n      position\n      label\n      color\n      fgColor\n    }\n  }\n"): (typeof documents)["\n  query OrderItems {\n    orderItems {\n      id\n      position\n      label\n      color\n      fgColor\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
